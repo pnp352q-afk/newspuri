@@ -9,13 +9,15 @@ const db = openDb();
 const HORIZONS = [1, 5, 20];
 const typeName = Object.fromEntries(eventTypes().map(t => [t['코드'], t['이름']]));
 
-const last = db.prepare("SELECT MAX(rcept_dt) d FROM disclosure WHERE event_type<>'OTHER'").get().d;
+// 실제(DART) 해석이 하나라도 있으면 실제만, 없을 때만 견본을 보여 준다 — 한 화면에 섞지 않는다
+const SRC = db.prepare("SELECT 1 FROM interpretation WHERE source='dart' LIMIT 1").get() ? 'dart' : 'sample';
+const last = db.prepare("SELECT MAX(rcept_dt) d FROM disclosure WHERE event_type<>'OTHER' AND source=?").get(SRC).d;
 if (!last) { console.error('[멈춤] 공시가 없습니다. 먼저 fetch_dart.js 를 돌리세요.'); process.exit(2); }
 
 const rows = db.prepare(`SELECT d.*, i.json, i.model, i.created_at FROM disclosure d
-  JOIN interpretation i ON i.rcept_no = d.rcept_no WHERE d.rcept_dt = ? ORDER BY d.rcept_no`).all(last);
+  JOIN interpretation i ON i.rcept_no = d.rcept_no WHERE d.rcept_dt = ? AND d.source = ? ORDER BY d.rcept_no`).all(last, SRC);
 const pending = db.prepare(`SELECT COUNT(*) n FROM disclosure d LEFT JOIN interpretation i ON i.rcept_no=d.rcept_no
-  WHERE d.rcept_dt=? AND d.event_type<>'OTHER' AND i.rcept_no IS NULL`).get(last).n;
+  WHERE d.rcept_dt=? AND d.source=? AND d.event_type<>'OTHER' AND i.rcept_no IS NULL`).get(last, SRC).n;
 
 // 같은 종류 공시의 과거 움직임 — 실제 자료가 있으면 실제, 없으면 견본. 둘을 섞지 않는다.
 function statsOf(type, wantSample) {
