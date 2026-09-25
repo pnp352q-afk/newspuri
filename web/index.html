@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>뉴스풀이 — 오늘의 공시</title>
+<style>
+:root{
+  --paper:#F6F5F1; --card:#FFFFFF; --sunk:#EFEDE7; --ink:#17191C; --ink2:#454A52; --muted:#7A808A;
+  --rule:#E3E0D8; --accent:#1F4E79; --up:#C8322B; --down:#1D5FB8; --warn:#9A6400; --warnbg:#FFF6E0;
+  --shadow:0 1px 6px rgba(32,33,36,.12);
+}
+@media (prefers-color-scheme: dark){ :root{
+  --paper:#15171A; --card:#1E2125; --sunk:#262A2F; --ink:#ECEDEF; --ink2:#C3C7CD; --muted:#8E949C;
+  --rule:#30353B; --accent:#8DB8E3; --up:#F0736A; --down:#6FA4EE; --warn:#F2C35B; --warnbg:#3A3120;
+  --shadow:0 1px 6px rgba(0,0,0,.45);
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);word-break:keep-all;overflow-wrap:anywhere;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 48px}
+header{padding:28px 0 12px}
+h1{font-size:26px;margin:0}
+.sub{color:var(--muted);font-size:14px;margin-top:2px}
+.notice{background:var(--warnbg);color:var(--warn);border-radius:14px;padding:12px 16px;font-size:14px;margin:12px 0 4px}
+.notice b{color:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.chip{border:1px solid var(--rule);background:var(--card);color:var(--ink2);border-radius:999px;padding:0 16px;min-height:44px;font:inherit;font-size:14px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:20px;margin:14px 0}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.corp{font-size:19px;font-weight:700;margin-right:4px}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--sunk);color:var(--ink2)}
+.tag.good{background:color-mix(in srgb,var(--up) 14%,transparent);color:var(--up)}
+.tag.bad{background:color-mix(in srgb,var(--down) 14%,transparent);color:var(--down)}
+.tag.sample{background:var(--warnbg);color:var(--warn);font-weight:600}
+.title{color:var(--muted);font-size:13px;margin:4px 0 12px}
+ol.easy{margin:0;padding:0;list-style:none;counter-reset:e}
+ol.easy li{position:relative;padding:6px 0 6px 76px;border-top:1px solid var(--rule)}
+ol.easy li:first-child{border-top:0}
+ol.easy li::before{position:absolute;left:0;top:7px;font-size:12px;color:var(--muted);width:68px}
+ol.easy li:nth-child(1)::before{content:"무슨 일"}
+ol.easy li:nth-child(2)::before{content:"왜 중요"}
+ol.easy li:nth-child(3)::before{content:"더 볼 것"}
+.why{font-size:13px;color:var(--ink2);margin:10px 0 0}
+h3{font-size:14px;margin:18px 0 8px;color:var(--ink2)}
+.bars{display:grid;grid-template-columns:52px 1fr 64px;gap:6px 10px;align-items:center;font-size:13px}
+.track{position:relative;height:14px;background:var(--sunk);border-radius:7px}
+.track::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--muted)}
+.bar{position:absolute;top:2px;height:10px;border-radius:5px}
+.val{text-align:right}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}
+.lack{font-size:13px;color:var(--muted);background:var(--sunk);border-radius:10px;padding:10px 12px}
+.ev{margin:0;padding:0;list-style:none}
+.ev li{font-size:13px;margin:6px 0}
+.ev q{display:block;background:var(--sunk);border-radius:10px;padding:8px 12px;color:var(--ink)}
+.ev q::before,.ev q::after{content:""}
+a{color:var(--accent)}
+.foot{font-size:12px;color:var(--muted);margin-top:14px}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);margin-top:32px;padding-top:16px}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>뉴스풀이</h1>
+    <div class="sub" id="sub">오늘의 공시를 쉬운 말로</div>
+    <div class="notice"><b>투자 자문이 아닙니다.</b> 공시 내용을 쉬운 말로 풀고, 과거 비슷한 공시 뒤의 움직임을 보여 줄 뿐입니다. 앞으로의 주가를 알려 주지 않으며 사고팔기를 권하지 않습니다. 투자 판단과 책임은 본인에게 있습니다.</div>
+  </header>
+  <div class="chips" id="chips" role="group" aria-label="판단으로 거르기"></div>
+  <main id="list"><p class="empty">불러오는 중…</p></main>
+  <footer>
+    <p><b>투자 자문이 아닙니다.</b> 이 화면의 해석은 AI가 공시 원문만 읽고 만든 것이며 틀릴 수 있습니다. 반드시 원문을 확인하세요.</p>
+    <p>빨강 = 시장보다 더 오름 · 파랑 = 시장보다 덜 오름(또는 더 내림). «과거 움직임»은 지나간 일의 중앙값이지 앞으로의 예보가 아닙니다.</p>
+  </footer>
+</div>
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = d => `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6)}`;
+const DAYS = {1:'당일', 5:'5일', 20:'20일'};
+let DATA = null, FILTER = '전체';
+
+function historyHTML(h){
+  if (!h || !h.items) return `<h3>과거 비슷한 공시 뒤 주가</h3><div class="lack">아직 셈한 자료가 없습니다.</div>`;
+  if (h.items.every(i => i.median == null))
+    return `<h3>과거 비슷한 공시 뒤 주가</h3><div class="lack">자료 부족 — 과거 5년 표본이 <span class="num">${h.n}</span>건뿐이라 싣지 않습니다(30건 이상일 때만).</div><div class="meta">출처: ${esc(h.source)}</div>`;
+  const max = Math.max(3, ...h.items.map(i => Math.abs(i.median ?? 0)));
+  const rows = h.items.map(i => {
+    if (i.median == null) return `<span>${DAYS[i.days]}</span><div class="track"></div><span class="val">—</span>`;
+    const w = Math.abs(i.median) / max * 50, up = i.median >= 0;
+    return `<span>${DAYS[i.days]}</span><div class="track" role="img" aria-label="${DAYS[i.days]} 시장 대비 ${i.median}%p">`
+      + `<div class="bar" style="${up ? 'left:50%' : `left:${50 - w}%`};width:${w}%;background:var(${up ? '--up' : '--down'})"></div></div>`
+      + `<span class="val num">${up ? '+' : ''}${i.median.toFixed(1)}%p</span>`;
+  }).join('');
+  return `<h3>과거 비슷한 공시 뒤, 시장보다 얼마나 움직였나 (중앙값)</h3><div class="bars">${rows}</div>`
+    + `<div class="meta">표본 <span class="num">${h.n.toLocaleString()}</span>건 · 기간 ${esc(h.period)} · 출처 ${esc(h.source)} · 셈한 때 ${esc(h.computed_at.slice(0,10))}</div>`;
+}
+
+function cardHTML(c){
+  const toneCls = c.tone === '호재 쪽' ? 'good' : c.tone === '악재 쪽' ? 'bad' : '';
+  return `<article class="card">
+    <div class="top">
+      <span class="corp">${esc(c.corp_name)}</span>
+      <span class="tag">${esc(c.market)}</span>
+      <span class="tag">${esc(c.type_name)}</span>
+      <span class="tag ${toneCls}">흔히 «${esc(c.tone)}»</span>
+      ${c.surprise !== '알 수 없음' ? `<span class="tag">놀라움 ${esc(c.surprise)}</span>` : ''}
+      ${c.is_fix ? '<span class="tag">정정 공시</span>' : ''}
+      ${c.sample ? '<span class="tag sample">견본 — 실제 아님</span>' : ''}
+    </div>
+    <div class="title">${esc(c.title)} · <span class="num">${fmtDate(c.date)}</span> · ${esc(c.source)}</div>
+    <ol class="easy">${c.easy.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+    <p class="why">${esc(c.tone_reason)}</p>
+    ${historyHTML(c.history)}
+    <h3>근거 (원문에서 그대로)</h3>
+    <ul class="ev">${c.evidence.map(e => `<li><q>${esc(e.quote)}</q><a href="${esc(e.link)}" target="_blank" rel="noopener">원문 보기 ↗</a></li>`).join('')}</ul>
+    <div class="foot">해석: ${esc(c.interpreted_by)} · ${esc(c.interpreted_at.slice(0,16).replace('T',' '))} (UTC) · AI 해석은 틀릴 수 있습니다</div>
+  </article>`;
+}
+
+function render(){
+  const tones = ['전체', '호재 쪽', '악재 쪽', '판단 어려움', '중립'].filter(t => t === '전체' || DATA.cards.some(c => c.tone === t));
+  const chips = document.getElementById('chips');
+  chips.innerHTML = tones.map(t => `<button class="chip" type="button" aria-pressed="${t === FILTER}" data-t="${esc(t)}">${esc(t)} <span class="num">${t === '전체' ? DATA.cards.length : DATA.cards.filter(c => c.tone === t).length}</span></button>`).join('');
+  const cards = DATA.cards.filter(c => FILTER === '전체' || c.tone === FILTER);
+  document.getElementById('list').innerHTML = cards.length ? cards.map(cardHTML).join('') : '<p class="empty">해당하는 공시가 없습니다.</p>';
+}
+
+document.getElementById('chips').addEventListener('click', e => {
+  const b = e.target.closest('[data-t]'); if (!b) return;
+  FILTER = b.dataset.t; render();
+});
+
+fetch('/today.json', {cache: 'no-cache'}).then(r => r.json()).then(d => {
+  DATA = d;
+  document.getElementById('sub').innerHTML = `<span class="num">${fmtDate(d.date)}</span> 공시 <span class="num">${d.cards.length}</span>건을 쉬운 말로` + (d.pending ? ` · 해석 대기 <span class="num">${d.pending}</span>건` : '');
+  render();
+}).catch(() => { document.getElementById('list').innerHTML = '<p class="empty">자료를 불러오지 못했습니다.</p>'; });
+</script>
+</body>
+</html>

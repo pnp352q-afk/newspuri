@@ -1,0 +1,20 @@
+{
+  "name": "newspuri",
+  "description": "뉴스풀이 — 공시·뉴스를 쉬운 말로 해석 (투자 자문 아님)",
+  "scripts": {
+    "sample": "node --disable-warning=ExperimentalWarning src/fetch_dart.js --sample && node --disable-warning=ExperimentalWarning src/event_study.js --demo && node --disable-warning=ExperimentalWarning src/interpret.js --sample && node --disable-warning=ExperimentalWarning src/build_web.js && node --disable-warning=ExperimentalWarning src/check.js",
+    "fetch": "node --disable-warning=ExperimentalWarning src/fetch_dart.js",
+    "study": "node --disable-warning=ExperimentalWarning src/event_study.js",
+    "interpret": "node --disable-warning=ExperimentalWarning src/interpret.js",
+    "build": "node --disable-warning=ExperimentalWarning src/build_web.js",
+    "check": "node --disable-warning=ExperimentalWarning src/check.js",
+    "serve": "node --disable-warning=ExperimentalWarning src/server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "zod": "^4.6.5"
+  },
+  "type": "module",
+  "private": true,
+  "version": "0.1.0"
+}

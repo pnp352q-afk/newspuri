@@ -1,0 +1,90 @@
+[
+  {
+    "corp_code": "99000001",
+    "corp_name": "가나전자(견본)",
+    "stock_code": "S00001",
+    "corp_cls": "Y",
+    "report_nm": "단일판매ㆍ공급계약체결",
+    "rcept_no": "20260925990001",
+    "flr_nm": "가나전자(견본)",
+    "rcept_dt": "20260925",
+    "rm": "유"
+  },
+  {
+    "corp_code": "99000002",
+    "corp_name": "다라바이오(견본)",
+    "stock_code": "S00002",
+    "corp_cls": "K",
+    "report_nm": "유상증자결정",
+    "rcept_no": "20260925990002",
+    "flr_nm": "다라바이오(견본)",
+    "rcept_dt": "20260925",
+    "rm": "코"
+  },
+  {
+    "corp_code": "99000003",
+    "corp_name": "마바건설(견본)",
+    "stock_code": "S00003",
+    "corp_cls": "Y",
+    "report_nm": "자기주식취득결정",
+    "rcept_no": "20260925990003",
+    "flr_nm": "마바건설(견본)",
+    "rcept_dt": "20260925",
+    "rm": "유"
+  },
+  {
+    "corp_code": "99000004",
+    "corp_name": "사아식품(견본)",
+    "stock_code": "S00004",
+    "corp_cls": "Y",
+    "report_nm": "연결재무제표기준영업(잠정)실적(공정공시)",
+    "rcept_no": "20260925990004",
+    "flr_nm": "사아식품(견본)",
+    "rcept_dt": "20260925",
+    "rm": "유"
+  },
+  {
+    "corp_code": "99000005",
+    "corp_name": "자차소재(견본)",
+    "stock_code": "S00005",
+    "corp_cls": "K",
+    "report_nm": "전환사채권발행결정",
+    "rcept_no": "20260925990005",
+    "flr_nm": "자차소재(견본)",
+    "rcept_dt": "20260925",
+    "rm": "코"
+  },
+  {
+    "corp_code": "99000006",
+    "corp_name": "카타게임즈(견본)",
+    "stock_code": "S00006",
+    "corp_cls": "K",
+    "report_nm": "임원ㆍ주요주주특정증권등소유상황보고서",
+    "rcept_no": "20260925990006",
+    "flr_nm": "김견본",
+    "rcept_dt": "20260925",
+    "rm": "코"
+  },
+  {
+    "corp_code": "99000007",
+    "corp_name": "파하에너지(견본)",
+    "stock_code": "S00007",
+    "corp_cls": "Y",
+    "report_nm": "주식소각결정",
+    "rcept_no": "20260925990007",
+    "flr_nm": "파하에너지(견본)",
+    "rcept_dt": "20260925",
+    "rm": "유"
+  },
+  {
+    "corp_code": "99000008",
+    "corp_name": "거너화학(견본)",
+    "stock_code": "S00008",
+    "corp_cls": "Y",
+    "report_nm": "[기재정정]현금ㆍ현물배당결정",
+    "rcept_no": "20260925990008",
+    "flr_nm": "거너화학(견본)",
+    "rcept_dt": "20260925",
+    "rm": "유"
+  }
+]
