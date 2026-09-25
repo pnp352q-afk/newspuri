@@ -1,8 +1,8 @@
 // 공시 해석기 — 공시 원문 → {사건 종류, 호재/악재 쪽, 놀라움 정도, 쉬운 말 3줄, 근거 문장}
 //
-//   node src/interpret.js             아직 해석 안 한 오늘·어제 공시를 Claude 로 해석
-//   node src/interpret.js --days 3    최근 3일
-//   node src/interpret.js --limit 20  한 번에 최대 20건(비용 조절)
+//   node src/interpret.js             공시가 있었던 가장 최근 하루치를 Claude 로 해석(연휴·주말은 건너뜀)
+//   node src/interpret.js --days 3    공시가 있었던 최근 3일
+//   node src/interpret.js --limit 20  한 번에 최대 20건(비용 조절). 상장사 공시만 한다
 //   node src/interpret.js --sample    견본 공시를 «규칙»으로 해석(열쇠·인터넷 필요 없음)
 //
 // 지키는 것
@@ -31,9 +31,12 @@ const db = openDb();
 const save = db.prepare('INSERT OR REPLACE INTO interpretation VALUES (?,?,?,?,?)');
 const saveDoc = db.prepare('INSERT OR REPLACE INTO document VALUES (?,?,?)');
 
-const since = new Date(Date.now() + 9 * 3600e3 - (Number(opt('--days') || 2) - 1) * 864e5).toISOString().slice(0, 10).replace(/-/g, '');
+// 달력이 아니라 «공시가 실제로 있었던 날» 기준 — 추석·주말처럼 0건인 날에 걸려 빈손이 되지 않게
+const since = db.prepare(`SELECT MIN(d) d FROM (SELECT DISTINCT rcept_dt d FROM disclosure WHERE source='dart'
+  ORDER BY d DESC LIMIT ?)`).get(Number(opt('--days') || 1))?.d || '99999999';
 const todo = db.prepare(`SELECT d.* FROM disclosure d LEFT JOIN interpretation i ON i.rcept_no = d.rcept_no
   WHERE i.rcept_no IS NULL AND d.event_type <> 'OTHER' AND d.source = ? AND d.rcept_dt >= ?
+    AND (d.source = 'sample' OR d.stock_code <> '')  -- 상장사만: 주가가 없으면 «과거 움직임»을 붙일 수 없다
   ORDER BY d.rcept_dt DESC, d.rcept_no DESC LIMIT ?`).all(SAMPLE ? 'sample' : 'dart', SAMPLE ? '0' : since, Number(opt('--limit') || 50));
 
 // ── 원문 가져오기 ─────────────────────────────────────────────

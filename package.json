@@ -8,7 +8,8 @@
     "interpret": "node --disable-warning=ExperimentalWarning src/interpret.js",
     "build": "node --disable-warning=ExperimentalWarning src/build_web.js",
     "check": "node --disable-warning=ExperimentalWarning src/check.js",
-    "serve": "node --disable-warning=ExperimentalWarning src/server.js"
+    "serve": "node --disable-warning=ExperimentalWarning src/server.js",
+    "stats": "node --disable-warning=ExperimentalWarning src/stats.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",
