@@ -32,12 +32,14 @@ const save = db.prepare('INSERT OR REPLACE INTO interpretation VALUES (?,?,?,?,?
 const saveDoc = db.prepare('INSERT OR REPLACE INTO document VALUES (?,?,?)');
 
 // 달력이 아니라 «공시가 실제로 있었던 날» 기준 — 추석·주말처럼 0건인 날에 걸려 빈손이 되지 않게
+// 해석 차례 = config/event_types.csv 의 줄 차례(기획자가 위아래로 옮겨 정한다)
+const typeOrder = 'CASE d.event_type ' + TYPES.map((t, i) => `WHEN '${t['코드'].replace(/'/g, '')}' THEN ${i}`).join(' ') + ' ELSE 999 END';
 const since = db.prepare(`SELECT MIN(d) d FROM (SELECT DISTINCT rcept_dt d FROM disclosure WHERE source='dart'
   ORDER BY d DESC LIMIT ?)`).get(Number(opt('--days') || 1))?.d || '99999999';
 const todo = db.prepare(`SELECT d.* FROM disclosure d LEFT JOIN interpretation i ON i.rcept_no = d.rcept_no
   WHERE i.rcept_no IS NULL AND d.event_type <> 'OTHER' AND d.source = ? AND d.rcept_dt >= ?
     AND (d.source = 'sample' OR d.stock_code <> '')  -- 상장사만: 주가가 없으면 «과거 움직임»을 붙일 수 없다
-  ORDER BY d.rcept_dt DESC, d.rcept_no DESC LIMIT ?`).all(SAMPLE ? 'sample' : 'dart', SAMPLE ? '0' : since, Number(opt('--limit') || 50));
+  ORDER BY ${typeOrder} , d.rcept_dt DESC, d.rcept_no DESC LIMIT ?`).all(SAMPLE ? 'sample' : 'dart', SAMPLE ? '0' : since, Number(opt('--limit') || 50));
 
 // ── 원문 가져오기 ─────────────────────────────────────────────
 async function docText(d, key) {
@@ -118,7 +120,10 @@ let client = null, key = null;
 if (!SAMPLE) {
   key = readKey('dartkey');
   if (!key) { console.error(`[멈춤] DART 열쇠를 읽지 못했습니다 — ${keyProblem('dartkey')}`); process.exit(2); }
-  client = new Anthropic(); // 열쇠는 환경변수 ANTHROPIC_API_KEY 또는 «ant auth login» 에서 읽는다
+  // Claude 열쇠: 환경변수 ANTHROPIC_API_KEY 가 있으면 그것, 없으면 열쇠 폴더의 .anthropickey
+  const ak = process.env.ANTHROPIC_API_KEY ? null : readKey('anthropickey');
+  if (!process.env.ANTHROPIC_API_KEY && !ak) { console.error(`[멈춤] Claude 열쇠를 읽지 못했습니다 — ${keyProblem('anthropickey')}`); process.exit(2); }
+  client = ak ? new Anthropic({ apiKey: ak }) : new Anthropic();
 }
 
 let ok = 0, bad = 0;
