@@ -16,7 +16,7 @@ import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod';
 import { openDb, now } from './lib/db.js';
 import { eventTypes } from './lib/classify.js';
 import { problemsOf } from './lib/rules.js';
-import { readKey, keyDir } from './lib/keys.js';
+import { readKey, keyProblem } from './lib/keys.js';
 import { unzip, xmlToText } from './lib/unzip.js';
 import { p } from './lib/paths.js';
 
@@ -114,7 +114,7 @@ function viaRules(d, text) {
 let client = null, key = null;
 if (!SAMPLE) {
   key = readKey('dartkey');
-  if (!key) { console.error(`[멈춤] DART 열쇠 파일이 없습니다: ${keyDir()} 의 .dartkey`); process.exit(2); }
+  if (!key) { console.error(`[멈춤] DART 열쇠를 읽지 못했습니다 — ${keyProblem('dartkey')}`); process.exit(2); }
   client = new Anthropic(); // 열쇠는 환경변수 ANTHROPIC_API_KEY 또는 «ant auth login» 에서 읽는다
 }
 

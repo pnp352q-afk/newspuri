@@ -15,7 +15,7 @@
 import fs from 'node:fs';
 import { openDb, now } from './lib/db.js';
 import { requireAllowed } from './lib/ledger.js';
-import { readKey, keyDir } from './lib/keys.js';
+import { readKey, keyProblem } from './lib/keys.js';
 import { classify, isFix } from './lib/classify.js';
 import { p } from './lib/paths.js';
 
@@ -50,7 +50,7 @@ if (has('--sample')) {
 requireAllowed('dart');
 const KEY = readKey('dartkey');
 if (!KEY) {
-  console.error(`[멈춤] DART 열쇠 파일이 없습니다: ${keyDir()} 폴더의 .dartkey`);
+  console.error(`[멈춤] DART 열쇠를 읽지 못했습니다 — ${keyProblem('dartkey')}`);
   console.error('       https://opendart.fss.or.kr 에서 직접 로그인해 «인증키 신청»을 하고, 받은 열쇠를 그 파일에 한 줄로 넣으세요.');
   process.exit(2);
 }
